@@ -28,6 +28,7 @@
 
   "permissions": [
     "storage",
+    "serial",
     "<all_urls>"
   ]
 }
