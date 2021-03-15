@@ -1,5 +1,7 @@
 import * as $ from "jquery";
 
+const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
+
 $(async function () {
   if (location.href === "https://solt9029.github.io/drinking-sudo/") {
     return;
@@ -23,25 +25,37 @@ $(async function () {
   try {
     port = await (navigator as any).serial.requestPort();
     await port.open({ baudRate: 9600 });
-    console.log("connect");
+    console.log("connect success");
+
+    async function handleClick(event) {
+      console.log((event.target as HTMLElement).className);
+      if ((event.target as HTMLElement).className !== tweetElement.className) {
+        return;
+      }
+
+      homeElement.innerHTML = "センサーに息を吹きかけてください";
+      event.stopPropagation();
+      Array.from(document.getElementsByTagName("div")).forEach((element) => {
+        element.removeEventListener("click", handleClick);
+      });
+
+      await sleep(5000);
+
+      if (
+        sensorValues
+          .slice(sensorValues.length - 10)
+          .some((value) => value >= threshold)
+      ) {
+        window.open("https://solt9029.github.io/drinking-sudo/");
+        return;
+      }
+
+      tweetElement.click();
+      console.log("tweet success");
+    }
 
     Array.from(document.getElementsByTagName("div")).forEach((element) => {
-      element.addEventListener("click", function (event) {
-        console.log((event.target as HTMLElement).className);
-        homeElement.innerHTML = "センサーに息を吹きかけてください";
-        setTimeout(() => {
-          if (
-            (event.target as HTMLElement).className ===
-              tweetElement.className &&
-            sensorValues.slice(sensorValues.length - 10).some((value) => {
-              value >= threshold;
-            })
-          ) {
-            event.stopPropagation();
-            window.open("https://solt9029.github.io/drinking-sudo/");
-          }
-        }, 5000);
-      });
+      element.addEventListener("click", handleClick);
     });
 
     while (port.readable) {
