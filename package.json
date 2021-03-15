@@ -7,7 +7,8 @@
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
-    "test": "npx jest"
+    "test": "npx jest",
+    "fmt": "prettier --write src/*.ts"
   },
   "author": "",
   "license": "MIT",
@@ -25,8 +26,9 @@
     "@types/jquery": "^3.3.31",
     "copy-webpack-plugin": "^5.0.5",
     "jest": "^24.9.0",
-    "ts-jest": "^24.2.0",
+    "prettier": "2.2.1",
     "rimraf": "^3.0.0",
+    "ts-jest": "^24.2.0",
     "ts-loader": "^6.2.1",
     "typescript": "~3.7.3",
     "webpack": "~4.41.2",
