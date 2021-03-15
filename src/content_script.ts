@@ -3,7 +3,7 @@ import * as $ from "jquery";
 const sleep = (msec) => new Promise((resolve) => setTimeout(resolve, msec));
 
 $(async function () {
-  if (location.href === "https://solt9029.github.io/drinking-sudo/") {
+  if (location.href === "http://localhost:5000") {
     return;
   }
 
@@ -47,7 +47,7 @@ $(async function () {
           .slice(sensorValues.length - 10)
           .some((value) => value >= threshold)
       ) {
-        window.open("https://solt9029.github.io/drinking-sudo/");
+        window.open("http://localhost:5000");
         return;
       }
 
