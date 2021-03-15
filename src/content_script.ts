@@ -28,16 +28,17 @@ $(async function () {
     console.log("connect success");
 
     async function handleClick(event) {
-      console.log((event.target as HTMLElement).className);
-      if ((event.target as HTMLElement).className !== tweetElement.className) {
-        return;
+      console.log(event.target);
+
+      if (
+        (event.target as HTMLElement).className !== tweetElement.className ||
+        event.isTrusted === false
+      ) {
+        return true;
       }
 
       homeElement.innerHTML = "センサーに息を吹きかけてください";
       event.stopPropagation();
-      Array.from(document.getElementsByTagName("div")).forEach((element) => {
-        element.removeEventListener("click", handleClick);
-      });
 
       await sleep(5000);
 
@@ -50,13 +51,13 @@ $(async function () {
         return;
       }
 
-      tweetElement.click();
       console.log("tweet success");
+      event.target.dispatchEvent(new Event("click", { bubbles: true }));
     }
 
     Array.from(document.getElementsByTagName("div")).forEach((element) => {
       element.addEventListener("click", handleClick);
-    });
+    }, false);
 
     while (port.readable) {
       const reader = port.readable.getReader();
