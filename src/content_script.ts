@@ -1,14 +1,24 @@
 import * as $ from "jquery";
 
 $(async function () {
-  let port;
-  const threshold = 600;
-  let sensorValue = threshold; // initial value
-  const buttonClassName = "css-901oao css-16my406 r-1tl8opc r-bcqeeo r-qvutc0";
-
   if (location.href === "https://solt9029.github.io/drinking-sudo/") {
     return;
   }
+
+  let port;
+  const threshold = 600;
+  let sensorValues = []; // initial value
+  let homeElement;
+  let tweetElement;
+
+  Array.from(document.getElementsByTagName("span")).forEach((element) => {
+    if (element.innerHTML === "Home") {
+      homeElement = element;
+    }
+    if (element.innerHTML === "Tweet") {
+      tweetElement = element;
+    }
+  });
 
   try {
     port = await (navigator as any).serial.requestPort();
@@ -17,14 +27,20 @@ $(async function () {
 
     Array.from(document.getElementsByTagName("div")).forEach((element) => {
       element.addEventListener("click", function (event) {
-        console.log((event.target as any).className);
-        if (
-          (event.target as any).className === buttonClassName &&
-          sensorValue >= threshold
-        ) {
-          event.stopPropagation();
-          window.open("https://solt9029.github.io/drinking-sudo/");
-        }
+        console.log((event.target as HTMLElement).className);
+        homeElement.innerHTML = "センサーに息を吹きかけてください";
+        setTimeout(() => {
+          if (
+            (event.target as HTMLElement).className ===
+              tweetElement.className &&
+            sensorValues.slice(sensorValues.length - 10).some((value) => {
+              value >= threshold;
+            })
+          ) {
+            event.stopPropagation();
+            window.open("https://solt9029.github.io/drinking-sudo/");
+          }
+        }, 5000);
       });
     });
 
@@ -37,9 +53,8 @@ $(async function () {
             break;
           }
           const decodedValue = new TextDecoder().decode(value);
-
-          sensorValue = parseInt(decodedValue);
-          console.log(sensorValue);
+          sensorValues.push(parseInt(decodedValue));
+          console.log(parseInt(decodedValue));
         }
       } catch (err) {
         console.log(err);
