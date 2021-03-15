@@ -2,6 +2,8 @@ import * as $ from "jquery";
 
 $(function () {
   let port;
+  let sensorValue = 600;
+
   (async function () {
     try {
       port = await (navigator as any).serial.requestPort();
@@ -20,7 +22,7 @@ $(function () {
             }
 
             console.log(decodedValue);
-            // https://solt9029.github.io/drinking-sudo/
+            sensorValue = parseInt(decodedValue);
           }
         } catch (error) {
           console.log(error);
@@ -32,4 +34,17 @@ $(function () {
       console.log(e);
     }
   })();
+
+  Array.from(document.getElementsByTagName("div")).forEach((element) => {
+    element.addEventListener("click", function (event) {
+      if (
+        (event.target as any).className ===
+          "css-901oao css-16my406 r-1tl8opc r-bcqeeo r-qvutc0" &&
+        sensorValue >= 600
+      ) {
+        event.stopPropagation();
+        window.open("https://solt9029.github.io/drinking-sudo/");
+      }
+    });
+  });
 });
